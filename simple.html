@@ -19,20 +19,13 @@
     	</ul>
     </div>
 	<div class="wrap-header">
-	<h1>
-    <a href="/" id="title"></a>
-	</h1>
+			<h1>
+            <a href="/" id="title"></a>
+			</h1>
 	</div>
 <div id="md" style="display: none;">
 <!-- markdown -->
-Simple是简单的静态博客生成器，基于 Github Pages，静态页面，完全在线操作，不需要服务器，只需一个 Github 账号即可。
-传统的独立博客玩法，需要域名、服务器、程序等等一系列服务才玩得转，当然功能也丰富的多。
 
-simple 需要 GitHub 账号，然后创建一个 username.github.io 的 project，注意要勾选生成 README。（支持绑定自己的域名）。
-
-然后访问 http://isnowfy.github.io/simple/ 并使用 Github 账号登录，根据提示就可以完成设置并自动生成页面了。
-
-最终的效果与作者的介绍页面相同，详细阅读后就知道怎么做的，注意每次打开页面后记得点一次 New Post 再开始写作，URL 里记得加 .html，支持标签。
 <!-- markdown end -->
 </div>
 <div class="entry" id="main">
@@ -72,17 +65,23 @@ $(document).ready(function() {
         dataType: "json",
         success: function(data) {
             $("#title").html(data.name);
-            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
-            var pagesHtml = pagesTemplate.render({"pages": data.pages});
-            $("#pages").append(pagesHtml);
+            var pages = [];
             //path
             var path = "simple.html";
             //path end
             var now = 0;
-            for (var i = 0; i < data.posts.length; ++i)
-                if (path == data.posts[i].path)
+            for (var i = 0; i < data.pages.length; ++i)
+                if (path == data.pages[i].path) {
                     now = i;
-            var post = data.posts[now];
+                    pages.push({"select": true, "path": data.pages[i].path, "title": data.pages[i].title});
+                }
+                else {
+                    pages.push({"select": false, "path": data.pages[i].path, "title": data.pages[i].title});
+                }
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": pages});
+            $("#pages").append(pagesHtml);
+            var post = data.pages[now];
             var tmp = post.tags.split(" ");
             var tags = [];
             for (var i = 0; i < tmp.length; ++i)
